@@ -1,0 +1,173 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix nutri: <http://nutrify.si.upm.es/ontologia#> .
+
+# ── Jerarquía de clases RDFS ─────────────────────────────────────────────────
+# Jena aplica rdfs9: si X rdf:type A y A rdfs:subClassOf B → X rdf:type B (inferido)
+# Jena aplica rdfs11: transitivity de subClassOf → salmon rdf:type Alimento
+
+nutri:Alimento  a rdfs:Class ; rdfs:label "Alimento" .
+nutri:Proteina  a rdfs:Class ; rdfs:subClassOf nutri:Alimento ; rdfs:label "Proteina" .
+nutri:Pescado   a rdfs:Class ; rdfs:subClassOf nutri:Proteina ; rdfs:label "Pescado" .
+nutri:Carne     a rdfs:Class ; rdfs:subClassOf nutri:Proteina ; rdfs:label "Carne" .
+nutri:Huevo     a rdfs:Class ; rdfs:subClassOf nutri:Proteina ; rdfs:label "Huevo" .
+nutri:Legumbre  a rdfs:Class ; rdfs:subClassOf nutri:Proteina ; rdfs:label "Legumbre" .
+nutri:Vegetal   a rdfs:Class ; rdfs:subClassOf nutri:Alimento ; rdfs:label "Vegetal" .
+nutri:Fruta     a rdfs:Class ; rdfs:subClassOf nutri:Alimento ; rdfs:label "Fruta" .
+nutri:Lacteo    a rdfs:Class ; rdfs:subClassOf nutri:Alimento ; rdfs:label "Lacteo" .
+nutri:Cereal    a rdfs:Class ; rdfs:subClassOf nutri:Alimento ; rdfs:label "Cereal" .
+nutri:Grasa     a rdfs:Class ; rdfs:subClassOf nutri:Alimento ; rdfs:label "Grasa" .
+
+# ── Propiedades nutricionales (valores por 100 g) ────────────────────────────
+
+nutri:calorias_100g      a rdf:Property ; rdfs:domain nutri:Alimento ; rdfs:range xsd:float .
+nutri:proteinas_100g     a rdf:Property ; rdfs:domain nutri:Alimento ; rdfs:range xsd:float .
+nutri:grasas_100g        a rdf:Property ; rdfs:domain nutri:Alimento ; rdfs:range xsd:float .
+nutri:carbohidratos_100g a rdf:Property ; rdfs:domain nutri:Alimento ; rdfs:range xsd:float .
+
+# ── Instancias: Pescado ───────────────────────────────────────────────────────
+
+nutri:salmon   a nutri:Pescado ;
+    nutri:calorias_100g "208.0"^^xsd:float ; nutri:proteinas_100g "20.4"^^xsd:float ;
+    nutri:grasas_100g "12.4"^^xsd:float    ; nutri:carbohidratos_100g "0.0"^^xsd:float .
+
+nutri:atun     a nutri:Pescado ;
+    nutri:calorias_100g "144.0"^^xsd:float ; nutri:proteinas_100g "23.4"^^xsd:float ;
+    nutri:grasas_100g "5.1"^^xsd:float     ; nutri:carbohidratos_100g "0.0"^^xsd:float .
+
+nutri:bacalao  a nutri:Pescado ;
+    nutri:calorias_100g "82.0"^^xsd:float  ; nutri:proteinas_100g "17.8"^^xsd:float ;
+    nutri:grasas_100g "0.9"^^xsd:float     ; nutri:carbohidratos_100g "0.0"^^xsd:float .
+
+nutri:merluza  a nutri:Pescado ;
+    nutri:calorias_100g "86.0"^^xsd:float  ; nutri:proteinas_100g "16.7"^^xsd:float ;
+    nutri:grasas_100g "2.0"^^xsd:float     ; nutri:carbohidratos_100g "0.0"^^xsd:float .
+
+# ── Instancias: Carne ─────────────────────────────────────────────────────────
+
+nutri:pollo    a nutri:Carne ;
+    nutri:calorias_100g "165.0"^^xsd:float ; nutri:proteinas_100g "31.0"^^xsd:float ;
+    nutri:grasas_100g "3.6"^^xsd:float     ; nutri:carbohidratos_100g "0.0"^^xsd:float .
+
+nutri:cerdo    a nutri:Carne ;
+    nutri:calorias_100g "242.0"^^xsd:float ; nutri:proteinas_100g "27.0"^^xsd:float ;
+    nutri:grasas_100g "14.0"^^xsd:float    ; nutri:carbohidratos_100g "0.0"^^xsd:float .
+
+nutri:ternera  a nutri:Carne ;
+    nutri:calorias_100g "250.0"^^xsd:float ; nutri:proteinas_100g "26.0"^^xsd:float ;
+    nutri:grasas_100g "15.0"^^xsd:float    ; nutri:carbohidratos_100g "0.0"^^xsd:float .
+
+# ── Instancias: Huevo ─────────────────────────────────────────────────────────
+
+nutri:huevo    a nutri:Huevo ;
+    nutri:calorias_100g "143.0"^^xsd:float ; nutri:proteinas_100g "12.6"^^xsd:float ;
+    nutri:grasas_100g "9.5"^^xsd:float     ; nutri:carbohidratos_100g "0.7"^^xsd:float .
+
+# ── Instancias: Legumbre ──────────────────────────────────────────────────────
+
+nutri:garbanzo a nutri:Legumbre ;
+    nutri:calorias_100g "364.0"^^xsd:float ; nutri:proteinas_100g "19.0"^^xsd:float ;
+    nutri:grasas_100g "6.0"^^xsd:float     ; nutri:carbohidratos_100g "61.0"^^xsd:float .
+
+nutri:lenteja  a nutri:Legumbre ;
+    nutri:calorias_100g "353.0"^^xsd:float ; nutri:proteinas_100g "24.0"^^xsd:float ;
+    nutri:grasas_100g "1.1"^^xsd:float     ; nutri:carbohidratos_100g "60.0"^^xsd:float .
+
+nutri:judia    a nutri:Legumbre ;
+    nutri:calorias_100g "335.0"^^xsd:float ; nutri:proteinas_100g "21.0"^^xsd:float ;
+    nutri:grasas_100g "1.2"^^xsd:float     ; nutri:carbohidratos_100g "60.0"^^xsd:float .
+
+# ── Instancias: Vegetal ───────────────────────────────────────────────────────
+
+nutri:tomate    a nutri:Vegetal ;
+    nutri:calorias_100g "18.0"^^xsd:float  ; nutri:proteinas_100g "0.9"^^xsd:float ;
+    nutri:grasas_100g "0.2"^^xsd:float     ; nutri:carbohidratos_100g "3.9"^^xsd:float .
+
+nutri:cebolla   a nutri:Vegetal ;
+    nutri:calorias_100g "40.0"^^xsd:float  ; nutri:proteinas_100g "1.1"^^xsd:float ;
+    nutri:grasas_100g "0.1"^^xsd:float     ; nutri:carbohidratos_100g "9.3"^^xsd:float .
+
+nutri:ajo       a nutri:Vegetal ;
+    nutri:calorias_100g "149.0"^^xsd:float ; nutri:proteinas_100g "6.4"^^xsd:float ;
+    nutri:grasas_100g "0.5"^^xsd:float     ; nutri:carbohidratos_100g "33.0"^^xsd:float .
+
+nutri:patata    a nutri:Vegetal ;
+    nutri:calorias_100g "77.0"^^xsd:float  ; nutri:proteinas_100g "2.0"^^xsd:float ;
+    nutri:grasas_100g "0.1"^^xsd:float     ; nutri:carbohidratos_100g "17.0"^^xsd:float .
+
+nutri:zanahoria a nutri:Vegetal ;
+    nutri:calorias_100g "41.0"^^xsd:float  ; nutri:proteinas_100g "0.9"^^xsd:float ;
+    nutri:grasas_100g "0.2"^^xsd:float     ; nutri:carbohidratos_100g "10.0"^^xsd:float .
+
+nutri:pimiento  a nutri:Vegetal ;
+    nutri:calorias_100g "31.0"^^xsd:float  ; nutri:proteinas_100g "1.0"^^xsd:float ;
+    nutri:grasas_100g "0.3"^^xsd:float     ; nutri:carbohidratos_100g "6.0"^^xsd:float .
+
+nutri:espinaca  a nutri:Vegetal ;
+    nutri:calorias_100g "23.0"^^xsd:float  ; nutri:proteinas_100g "2.9"^^xsd:float ;
+    nutri:grasas_100g "0.4"^^xsd:float     ; nutri:carbohidratos_100g "3.6"^^xsd:float .
+
+nutri:esparrago a nutri:Vegetal ;
+    nutri:calorias_100g "20.0"^^xsd:float  ; nutri:proteinas_100g "2.2"^^xsd:float ;
+    nutri:grasas_100g "0.1"^^xsd:float     ; nutri:carbohidratos_100g "3.9"^^xsd:float .
+
+nutri:calabacin a nutri:Vegetal ;
+    nutri:calorias_100g "17.0"^^xsd:float  ; nutri:proteinas_100g "1.2"^^xsd:float ;
+    nutri:grasas_100g "0.2"^^xsd:float     ; nutri:carbohidratos_100g "3.1"^^xsd:float .
+
+nutri:lechuga   a nutri:Vegetal ;
+    nutri:calorias_100g "14.0"^^xsd:float  ; nutri:proteinas_100g "1.4"^^xsd:float ;
+    nutri:grasas_100g "0.2"^^xsd:float     ; nutri:carbohidratos_100g "2.1"^^xsd:float .
+
+# ── Instancias: Fruta ─────────────────────────────────────────────────────────
+
+nutri:limon     a nutri:Fruta ;
+    nutri:calorias_100g "29.0"^^xsd:float  ; nutri:proteinas_100g "1.1"^^xsd:float ;
+    nutri:grasas_100g "0.3"^^xsd:float     ; nutri:carbohidratos_100g "9.3"^^xsd:float .
+
+nutri:naranja   a nutri:Fruta ;
+    nutri:calorias_100g "47.0"^^xsd:float  ; nutri:proteinas_100g "0.9"^^xsd:float ;
+    nutri:grasas_100g "0.1"^^xsd:float     ; nutri:carbohidratos_100g "12.0"^^xsd:float .
+
+nutri:aguacate  a nutri:Fruta ;
+    nutri:calorias_100g "160.0"^^xsd:float ; nutri:proteinas_100g "2.0"^^xsd:float ;
+    nutri:grasas_100g "15.0"^^xsd:float    ; nutri:carbohidratos_100g "9.0"^^xsd:float .
+
+# ── Instancias: Lácteo ────────────────────────────────────────────────────────
+
+nutri:leche     a nutri:Lacteo ;
+    nutri:calorias_100g "61.0"^^xsd:float  ; nutri:proteinas_100g "3.2"^^xsd:float ;
+    nutri:grasas_100g "3.3"^^xsd:float     ; nutri:carbohidratos_100g "4.8"^^xsd:float .
+
+nutri:queso     a nutri:Lacteo ;
+    nutri:calorias_100g "402.0"^^xsd:float ; nutri:proteinas_100g "25.0"^^xsd:float ;
+    nutri:grasas_100g "33.0"^^xsd:float    ; nutri:carbohidratos_100g "1.3"^^xsd:float .
+
+nutri:yogur     a nutri:Lacteo ;
+    nutri:calorias_100g "59.0"^^xsd:float  ; nutri:proteinas_100g "3.5"^^xsd:float ;
+    nutri:grasas_100g "3.3"^^xsd:float     ; nutri:carbohidratos_100g "4.7"^^xsd:float .
+
+# ── Instancias: Cereal ────────────────────────────────────────────────────────
+
+nutri:arroz     a nutri:Cereal ;
+    nutri:calorias_100g "360.0"^^xsd:float ; nutri:proteinas_100g "7.0"^^xsd:float ;
+    nutri:grasas_100g "1.0"^^xsd:float     ; nutri:carbohidratos_100g "79.0"^^xsd:float .
+
+nutri:pasta     a nutri:Cereal ;
+    nutri:calorias_100g "371.0"^^xsd:float ; nutri:proteinas_100g "13.0"^^xsd:float ;
+    nutri:grasas_100g "1.5"^^xsd:float     ; nutri:carbohidratos_100g "74.0"^^xsd:float .
+
+nutri:pan       a nutri:Cereal ;
+    nutri:calorias_100g "265.0"^^xsd:float ; nutri:proteinas_100g "9.0"^^xsd:float ;
+    nutri:grasas_100g "3.2"^^xsd:float     ; nutri:carbohidratos_100g "49.0"^^xsd:float .
+
+# ── Instancias: Grasa ─────────────────────────────────────────────────────────
+
+nutri:aceite       a nutri:Grasa ;
+    nutri:calorias_100g "884.0"^^xsd:float ; nutri:proteinas_100g "0.0"^^xsd:float ;
+    nutri:grasas_100g "100.0"^^xsd:float   ; nutri:carbohidratos_100g "0.0"^^xsd:float .
+
+nutri:mantequilla  a nutri:Grasa ;
+    nutri:calorias_100g "717.0"^^xsd:float ; nutri:proteinas_100g "0.9"^^xsd:float ;
+    nutri:grasas_100g "81.0"^^xsd:float    ; nutri:carbohidratos_100g "0.1"^^xsd:float .
