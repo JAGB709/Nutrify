@@ -2,6 +2,7 @@ package es.upm.nutricionista;
 
 import es.upm.nutricionista.nlp.SpanishStopWords;
 import es.upm.nutricionista.utils.DFHelper;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -35,6 +36,31 @@ public class AgenteInterfaz extends Agent {
         System.out.println("[AgenteInterfaz] Iniciando...");
         addBehaviour(new RegistrarServicioBehaviour());
         addBehaviour(new MostrarResultadosBehaviour());
+
+        // Arrancar la GUI en el hilo de eventos Swing
+        SwingUtilities.invokeLater(() -> {
+            gui = new NutrifyGUI();
+            gui.setListener(ingredientes -> {
+                // Desde Swing: notificar a AgentePercepcion via ACL
+                addBehaviour(new OneShotBehaviour() {
+                    @Override
+                    public void action() {
+                        AID percepcion = es.upm.nutricionista.utils.DFHelper.searchService(
+                                myAgent, "percepcion-service");
+                        if (percepcion == null) {
+                            System.err.println("[AgenteInterfaz] AgentePercepcion no disponible.");
+                            return;
+                        }
+                        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+                        msg.addReceiver(percepcion);
+                        msg.setContent(ingredientes);
+                        msg.setConversationId("nueva-consulta");
+                        myAgent.send(msg);
+                    }
+                });
+            });
+            gui.setVisible(true);
+        });
     }
 
     @Override
@@ -74,6 +100,7 @@ public class AgenteInterfaz extends Agent {
             String content = msg.getContent();
             if (content == null || content.trim().isEmpty()) return;
 
+            // Formato: "<queryTerms>||<resultados_serializados>"
             String queryTermsRaw = "";
             if (content.contains("||")) {
                 int sep = content.indexOf("||");
@@ -139,13 +166,14 @@ public class AgenteInterfaz extends Agent {
             String ingr     = parts[7];
             String pasosRaw = parts.length >= 9 ? parts[8] : "";
 
+            // Extraer tag de categoría ontológica si presente
             String catTag = "";
             for (int fi = 9; fi < parts.length; fi++) {
                 if (parts[fi].startsWith("cat:")) catTag = parts[fi].substring(4).trim();
             }
             if (catTag.isEmpty() && pasosRaw.contains("|cat:")) {
                 int ci = pasosRaw.indexOf("|cat:");
-                catTag   = pasosRaw.substring(ci + 5).trim();
+                catTag  = pasosRaw.substring(ci + 5).trim();
                 pasosRaw = pasosRaw.substring(0, ci);
             }
 
@@ -154,6 +182,7 @@ public class AgenteInterfaz extends Agent {
             sb.append("  ").append(rep(LIGHT, WIDTH - 2)).append("\n");
             sb.append("  Ingredientes:  ").append(ingr).append("\n");
 
+            // Gap Analysis: ingredientes de la receta que el usuario no tiene
             Set<String> recipeTokens = new HashSet<>();
             for (String ing : ingr.split(";")) {
                 for (String tok : ing.toLowerCase().split("\\s+")) {
