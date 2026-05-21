@@ -123,8 +123,9 @@ Dos suites JUnit 5:
 ## Declaración de uso de IA
 
 Se ha utilizado IA generativa (Claude) como asistente de codificación para:
-- Generación del esqueleto de los agentes JADE y la configuración Maven.
-- Elaboración del script de descarga y limpieza del dataset.
+- Generación del esqueleto de los agentes JADE, la configuración Maven y los comentarios del codigo.
+- Elaboración del script de descarga y limpieza del dataset. (pendiente de actualizar ya que se integrara esta tarea en el agente de percepcion)
 - Revisión de la lógica del motor IR (normas de documento para similitud coseno correcta).
+- Generación de tests dadas unas características y casos específicos
 
 Todo el código generado ha sido revisado, adaptado y validado por los autores del proyecto.
