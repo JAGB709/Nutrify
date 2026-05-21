@@ -23,6 +23,9 @@ import jade.wrapper.StaleProxyException;
 public class Main {
 
     public static void main(String[] args) throws Exception {
+        // Garantizar modo con pantalla (no headless) para la GUI Swing
+        System.setProperty("java.awt.headless", "false");
+
         System.out.println("╔══════════════════════════════════════════════════════════╗");
         System.out.println("           NUTRIFY — Nutricionista Virtual JADE            ");
         System.out.println("╚══════════════════════════════════════════════════════════╝\n");

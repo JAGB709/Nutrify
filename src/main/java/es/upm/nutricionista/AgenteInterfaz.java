@@ -39,27 +39,35 @@ public class AgenteInterfaz extends Agent {
 
         // Arrancar la GUI en el hilo de eventos Swing
         SwingUtilities.invokeLater(() -> {
-            gui = new NutrifyGUI();
-            gui.setListener(ingredientes -> {
-                // Desde Swing: notificar a AgentePercepcion via ACL
-                addBehaviour(new OneShotBehaviour() {
-                    @Override
-                    public void action() {
-                        AID percepcion = es.upm.nutricionista.utils.DFHelper.searchService(
-                                myAgent, "percepcion-service");
-                        if (percepcion == null) {
-                            System.err.println("[AgenteInterfaz] AgentePercepcion no disponible.");
-                            return;
+            try {
+                gui = new NutrifyGUI();
+                gui.setListener(ingredientes -> {
+                    // Desde Swing: notificar a AgentePercepcion via ACL
+                    addBehaviour(new OneShotBehaviour() {
+                        @Override
+                        public void action() {
+                            AID percepcion = es.upm.nutricionista.utils.DFHelper.searchService(
+                                    myAgent, "percepcion-service");
+                            if (percepcion == null) {
+                                System.err.println("[AgenteInterfaz] AgentePercepcion no disponible.");
+                                return;
+                            }
+                            ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+                            msg.addReceiver(percepcion);
+                            msg.setContent(ingredientes);
+                            msg.setConversationId("nueva-consulta");
+                            myAgent.send(msg);
                         }
-                        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-                        msg.addReceiver(percepcion);
-                        msg.setContent(ingredientes);
-                        msg.setConversationId("nueva-consulta");
-                        myAgent.send(msg);
-                    }
+                    });
                 });
-            });
-            gui.setVisible(true);
+                gui.setVisible(true);
+                gui.toFront();
+                gui.requestFocus();
+                System.out.println("[AgenteInterfaz] Ventana GUI abierta.");
+            } catch (Exception ex) {
+                System.err.println("[AgenteInterfaz] No se pudo abrir la GUI: " + ex);
+                ex.printStackTrace();
+            }
         });
     }
 

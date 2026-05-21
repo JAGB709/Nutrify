@@ -24,7 +24,7 @@ public class NutrifyGUI extends JFrame {
 
     public NutrifyGUI() {
         super("Nutrify — Nutricionista Virtual");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(780, 580);
         setLocationRelativeTo(null);
 
