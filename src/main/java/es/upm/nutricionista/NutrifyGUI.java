@@ -10,12 +10,14 @@ import java.awt.event.ActionEvent;
  * El usuario escribe ingredientes en el campo de texto y pulsa "Buscar Recetas"
  * (o Enter). La búsqueda se delega al AgentePercepcion via el listener registrado.
  * Los resultados llegan a través de mostrarResultados(), llamado desde AgenteInterfaz.
+ * El área de resultados usa JEditorPane con content-type "text/html" para
+ * renderizar tarjetas con código de colores, scores y tabla de macronutrientes.
  */
 public class NutrifyGUI extends JFrame {
 
-    private final JTextField    campoIngredientes;
-    private final JButton       botonBuscar;
-    private final JTextArea     areaResultados;
+    private final JTextField  campoIngredientes;
+    private final JButton     botonBuscar;
+    private final JEditorPane areaResultados;
     private       BusquedaListener listener;
 
     public interface BusquedaListener {
@@ -28,16 +30,13 @@ public class NutrifyGUI extends JFrame {
         setSize(780, 580);
         setLocationRelativeTo(null);
 
-        // ── Panel principal ────────────────────────────────────────────────
         JPanel main = new JPanel(new BorderLayout(10, 10));
         main.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Título
         JLabel titulo = new JLabel("Nutrify — Nutricionista Virtual", SwingConstants.CENTER);
         titulo.setFont(new Font("SansSerif", Font.BOLD, 20));
         main.add(titulo, BorderLayout.NORTH);
 
-        // ── Panel de entrada ───────────────────────────────────────────────
         JPanel panelEntrada = new JPanel(new BorderLayout(6, 0));
         panelEntrada.add(new JLabel("Ingredientes: "), BorderLayout.WEST);
 
@@ -49,14 +48,17 @@ public class NutrifyGUI extends JFrame {
         botonBuscar.setFont(new Font("SansSerif", Font.BOLD, 13));
         panelEntrada.add(botonBuscar, BorderLayout.EAST);
 
-        // ── Área de resultados ─────────────────────────────────────────────
-        areaResultados = new JTextArea();
+        areaResultados = new JEditorPane();
         areaResultados.setEditable(false);
-        areaResultados.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        areaResultados.setLineWrap(true);
-        areaResultados.setWrapStyleWord(true);
-        areaResultados.setText("\n  Introduce ingredientes y pulsa «Buscar Recetas».\n"
-                + "  Ejemplo: tomate, huevo, cebolla\n");
+        areaResultados.setContentType("text/html");
+        areaResultados.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        areaResultados.setFont(new Font("Arial", Font.PLAIN, 13));
+        areaResultados.setText(
+            "<html><body bgcolor='#f8f8f8' style='font-family:Arial,sans-serif;"
+            + "font-size:13px;margin:15px;'>"
+            + "<p>Introduce ingredientes y pulsa <b>&#171;Buscar Recetas&#187;</b>.</p>"
+            + "<p>Ejemplo: <i>tomate, huevo, cebolla</i></p>"
+            + "</body></html>");
 
         JPanel centro = new JPanel(new BorderLayout(0, 8));
         centro.add(panelEntrada, BorderLayout.NORTH);
@@ -65,7 +67,6 @@ public class NutrifyGUI extends JFrame {
 
         add(main);
 
-        // ── Acciones ───────────────────────────────────────────────────────
         botonBuscar.addActionListener((ActionEvent e) -> lanzarBusqueda());
         campoIngredientes.addActionListener((ActionEvent e) -> lanzarBusqueda());
     }
@@ -74,21 +75,26 @@ public class NutrifyGUI extends JFrame {
         String input = campoIngredientes.getText().trim();
         if (input.isEmpty()) return;
         if (listener == null) {
-            mostrarResultados("\n  [Error] Sistema no inicializado todavía.\n");
+            mostrarResultados("<html><body><p><font color='red'>"
+                    + "[Error] Sistema no inicializado todavía.</font></p></body></html>");
             return;
         }
         botonBuscar.setEnabled(false);
-        areaResultados.setText("\n  Buscando recetas para: " + input + " ...\n");
+        areaResultados.setText(
+            "<html><body bgcolor='#f8f8f8' style='font-family:Arial,sans-serif;"
+            + "font-size:13px;margin:15px;'>"
+            + "<p>Buscando recetas para: <b>" + input + "</b> ...</p>"
+            + "</body></html>");
         listener.onBuscar(input);
     }
 
     /**
-     * Actualiza el área de resultados. Debe llamarse desde el hilo de eventos Swing
-     * o con SwingUtilities.invokeLater().
+     * Actualiza el área de resultados con contenido HTML.
+     * Debe llamarse desde el hilo de eventos Swing o con SwingUtilities.invokeLater().
      */
-    public void mostrarResultados(String texto) {
+    public void mostrarResultados(String htmlTexto) {
         SwingUtilities.invokeLater(() -> {
-            areaResultados.setText(texto);
+            areaResultados.setText(htmlTexto);
             areaResultados.setCaretPosition(0);
             botonBuscar.setEnabled(true);
         });
