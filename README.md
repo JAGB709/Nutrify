@@ -12,6 +12,8 @@ Desarrollado para la asignatura **Sistemas Inteligentes** — UPM, curso 2025-26
 
 Nutrify aplica técnicas de **Recuperación de Información** (TF-IDF + Similitud Coseno + Jaccard) sobre un corpus de 20 000 recetas reales del dataset [RecetasDeLaAbuela](https://huggingface.co/datasets/somosnlp/RecetasDeLaAbuela). Los ingredientes de la consulta se normalizan con un pipeline NLP (minúsculas, eliminación de acentos, stop words en español, stemming) y se buscan en un índice invertido construido en tiempo de arranque.
 
+Además de los 10 resultados del motor IR, `AgentePercepcion` consulta la **API pública de TheMealDB** para obtener 2 recetas de temporada del mes actual — una fuente dinámica que cambia mensualmente y justifica la percepción ambiental del agente.
+
 La ontología RDF de alimentos (Apache Jena con razonador RDFS) clasifica los ingredientes por categoría (*Pescado*, *Carne*, *Legumbre*, *Vegetal*…) y permite inferir tipos transitivos: `salmon → Pescado → Proteína → Alimento`.
 
 ---
@@ -26,21 +28,24 @@ sequenceDiagram
     participant P as AgentePercepcion
     participant I as AgenteInteligente
     participant V as AgenteInterfaz
+    participant W as TheMealDB API
 
     U->>P: ingredientes (consola / GUI)
     P->>P: normalización NLP
     P->>I: ACLMessage.REQUEST (términos normalizados)
+    P->>W: HTTP GET recetas de temporada (mes actual)
     I->>I: TF-IDF + Jaccard + inferencia RDFS
-    I-->>P: ACLMessage.INFORM (resultados)
-    P-->>V: ACLMessage.INFORM (query + resultados)
-    V->>U: Gap Analysis + macronutrientes + pasos
+    I-->>P: ACLMessage.INFORM (10 resultados IR)
+    W-->>P: JSON recetas de temporada (2 recetas)
+    P-->>V: ACLMessage.INFORM (10 IR + 2 temporada)
+    V->>U: Gap Analysis + macronutrientes + pasos (GUI HTML)
 ```
 
 | Agente | Behaviour | Rol |
 |--------|-----------|-----|
-| `AgentePercepcion` | `CyclicBehaviour` | Entrada del usuario, NLP, despacho |
+| `AgentePercepcion` | `CyclicBehaviour` | NLP de entrada, consulta IR + percepción web (TheMealDB) |
 | `AgenteInteligente` | `CyclicBehaviour` + `blockingReceive` | Motor IR, ontología RDFS |
-| `AgenteInterfaz` | `CyclicBehaviour` | Presentación, Gap Analysis, GUI Swing |
+| `AgenteInterfaz` | `CyclicBehaviour` | Presentación HTML con Gap Analysis, tarjetas de temporada, GUI Swing |
 
 ---
 
@@ -116,6 +121,7 @@ Dos suites JUnit 5:
 ## Dataset y ontología
 
 - **Corpus**: [somosnlp/RecetasDeLaAbuela](https://huggingface.co/datasets/somosnlp/RecetasDeLaAbuela) — 20 012 recetas en español. El script `scripts/download_dataset.py` permite regenerar `recetas.json`.
+- **Recetas de temporada**: [TheMealDB](https://www.themealdb.com/) — API pública sin autenticación. `AgentePercepcion` consulta `filter.php?i={ingrediente}` y `lookup.php?i={id}` según los ingredientes de temporada del mes actual (enero–diciembre).
 - **Ontología**: `src/main/resources/ontologia_alimentos.ttl` — jerarquía RDFS de categorías de alimentos con valores nutricionales por 100 g.
 
 ---
