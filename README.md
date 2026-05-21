@@ -127,5 +127,6 @@ Se ha utilizado IA generativa (Claude) como asistente de codificación para:
 - Elaboración del script de descarga y limpieza del dataset. (pendiente de actualizar ya que se integrara esta tarea en el agente de percepcion)
 - Revisión de la lógica del motor IR (normas de documento para similitud coseno correcta).
 - Generación de tests dadas unas características y casos específicos
+- Asistencia en la redacción de este readme
 
 Todo el código generado ha sido revisado, adaptado y validado por los autores del proyecto.
