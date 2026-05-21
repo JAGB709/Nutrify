@@ -1,7 +1,9 @@
 package es.upm.nutricionista;
 
+import es.upm.nutricionista.modelo.Recipe;
 import es.upm.nutricionista.nlp.TextNormalizer;
 import es.upm.nutricionista.utils.DFHelper;
+import es.upm.nutricionista.utils.SeasonalRecipeFetcher;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -10,20 +12,21 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * AgentePercepcion — puerta de entrada del pipeline Nutrify.
+ * AgentePercepcion — percepción del entorno en el pipeline Nutrify.
  *
  * Responsabilidades:
  *  1. Registrarse en el DF como "percepcion-service"
- *  2. Leer ingredientes del usuario:
- *       - Modo consola: hilo daemon separado (no bloquea el hilo JADE)
- *       - Modo GUI:     recibe ACLMessage INFORM con convId "nueva-consulta"
- *  3. Normalizar la entrada a términos limpios (Bag of Words + stemming)
- *  4. Descubrir al AgenteInteligente via DF y enviar ACLMessage.REQUEST
- *  5. Esperar respuesta y reenviar al AgenteInterfaz
+ *  2. Percibir la entrada del usuario (consola o GUI) y normalizarla (NLP)
+ *  3. Descubrir al AgenteInteligente via DF y enviar ACLMessage.REQUEST
+ *  4. En paralelo con la espera de resultados IR, consultar TheMealDB para
+ *     obtener 2 recetas de temporada (percepción ambiental dinámica)
+ *  5. Combinar resultados IR + recetas de temporada y reenviar a AgenteInterfaz
  */
 public class AgentePercepcion extends Agent {
 
@@ -56,6 +59,31 @@ public class AgentePercepcion extends Agent {
     protected void takeDown() {
         DFHelper.deregisterService(this);
         System.out.println("[AgentePercepcion] Detenido.");
+    }
+
+    /**
+     * Serializa una lista de recetas de temporada al formato TEMPORAL: para AgenteInterfaz.
+     * Formato por línea: TEMPORAL:<id>|<nombre>|0.0000|0|0|0|0|<ingredientes>|<pasos>
+     */
+    private String serializarTemporales(List<Recipe> recetas) {
+        StringBuilder sb = new StringBuilder();
+        for (Recipe r : recetas) {
+            List<String> cleanIngs = new java.util.ArrayList<>();
+            for (String ing : r.getIngredientes())
+                cleanIngs.add(ing.replace(";", ",").replace("|", "##"));
+            List<String> cleanPasos = new java.util.ArrayList<>();
+            for (String p : r.getPasos())
+                cleanPasos.add(p.replace(";;", " ").replace("|", "##"));
+
+            sb.append("TEMPORAL:");
+            sb.append(r.getId()).append("|");
+            sb.append(r.getNombre().replace("|", "##")).append("|");
+            sb.append("0.0000|0|0|0|0|");
+            sb.append(String.join(";", cleanIngs)).append("|");
+            sb.append(String.join(";;", cleanPasos));
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
     /**
@@ -164,10 +192,23 @@ public class AgentePercepcion extends Agent {
             req.setContent(queryContent);
             req.setConversationId(convId);
             myAgent.send(req);
-            System.out.println("[AgentePercepcion] Consulta enviada: " + queryContent);
+            System.out.println("[AgentePercepcion] Consulta IR enviada: " + queryContent);
 
-            // Esperar respuesta del AgenteInteligente (blockingReceive es aceptable
-            // aquí porque es la única operación de este behaviour)
+            // Lanzar la búsqueda de recetas de temporada en paralelo con la espera de IR
+            AtomicReference<List<Recipe>> temporalRef =
+                    new AtomicReference<>(Collections.emptyList());
+            Thread seasonThread = new Thread(() -> {
+                try {
+                    temporalRef.set(SeasonalRecipeFetcher.fetch(2));
+                } catch (Exception e) {
+                    System.err.println("[AgentePercepcion] Error recetas temporada: "
+                            + e.getMessage());
+                }
+            }, "Nutrify-SeasonalFetch");
+            seasonThread.setDaemon(true);
+            seasonThread.start();
+
+            // Esperar respuesta del AgenteInteligente
             MessageTemplate respMt = MessageTemplate.and(
                 MessageTemplate.MatchPerformative(ACLMessage.INFORM),
                 MessageTemplate.MatchConversationId(convId));
@@ -177,15 +218,26 @@ public class AgentePercepcion extends Agent {
                 return;
             }
 
-            // Reenviar resultados al AgenteInterfaz
+            // Esperar a que el hilo de temporada termine (máx. 10 s adicionales)
+            try { seasonThread.join(10_000); } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+            List<Recipe> temporal = temporalRef.get();
+
+            // Reenviar resultados al AgenteInterfaz (IR + temporada)
             AID interfaz = DFHelper.searchService(myAgent, DISPLAY_SERVICE);
             if (interfaz == null) {
                 System.err.println("[AgentePercepcion] AgenteInterfaz no disponible.");
                 return;
             }
+            String irContent  = resp.getContent();
+            String tempSerial = serializarTemporales(temporal);
+            String combined   = tempSerial.isEmpty() ? irContent
+                    : irContent + (irContent.endsWith("\n") ? "" : "\n") + tempSerial.trim();
+
             ACLMessage display = new ACLMessage(ACLMessage.INFORM);
             display.addReceiver(interfaz);
-            display.setContent(queryContent + "||" + resp.getContent());
+            display.setContent(queryContent + "||" + combined);
             myAgent.send(display);
         }
     }
