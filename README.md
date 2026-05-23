@@ -130,7 +130,7 @@ Dos suites JUnit 5:
 
 Se ha utilizado IA generativa (Claude) como asistente de codificación para:
 - Generación del esqueleto de los agentes JADE, la configuración Maven y los comentarios del codigo.
-- Elaboración del script de descarga y limpieza del dataset. (pendiente de actualizar ya que se integrara esta tarea en el agente de percepcion)
+- Elaboración del script de descarga y limpieza del dataset. 
 - Revisión de la lógica del motor IR (normas de documento para similitud coseno correcta).
 - Generación de tests dadas unas características y casos específicos
 - Asistencia en la redacción de este readme
