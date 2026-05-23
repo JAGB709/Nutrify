@@ -12,7 +12,7 @@ Desarrollado para la asignatura **Sistemas Inteligentes** — UPM, curso 2025-26
 
 Nutrify aplica técnicas de **Recuperación de Información** (TF-IDF + Similitud Coseno + Jaccard) sobre un corpus de 20 000 recetas reales del dataset [RecetasDeLaAbuela](https://huggingface.co/datasets/somosnlp/RecetasDeLaAbuela). Los ingredientes de la consulta se normalizan con un pipeline NLP (minúsculas, eliminación de acentos, stop words en español, stemming) y se buscan en un índice invertido construido en tiempo de arranque.
 
-Además de los 10 resultados del motor IR, `AgentePercepcion` consulta la **API pública de TheMealDB** para obtener 2 recetas de temporada del mes actual — una fuente dinámica que cambia mensualmente.
+Además de los 10 resultados del motor IR, `AgentePercepcion` consulta la **API pública de TheMealDB** para obtener 2 recetas de temporada del mes actual una fuente dinámica que cambia mensualmente.
 
 La ontología RDF de alimentos (Apache Jena con razonador RDFS) clasifica los ingredientes por categoría (*Pescado*, *Carne*, *Legumbre*, *Vegetal*…) y permite inferir tipos transitivos: `salmon → Pescado → Proteína → Alimento`.
 
@@ -140,7 +140,7 @@ IntelliJ descargará automáticamente **Apache Jena 4.10.0** y **JUnit 5** desde
 
 ## 4. Ejecución
 
-### Opción A — Ejecutable standalone (recomendado)
+### Opción A: Ejecutable standalone (recomendado)
 
 Sin necesidad de Maven ni IntelliJ. Solo requiere Java 11+:
 
@@ -155,14 +155,14 @@ nutrify.bat
 nutrify.bat tomate cebolla ajo
 ```
 
-### Opción B — Desde IntelliJ IDEA
+### Opción B: Desde IntelliJ IDEA
 
 1. Esperar a que Maven sincronice las dependencias.
 2. Abrir `src/main/java/es/upm/agentlauncher/Main.java`.
 3. Pulsar **Run** (▶).
 4. Se abre **NutrifyGUI**: escribir ingredientes separados por coma y pulsar *Buscar Recetas*.
 
-### Opción C — Línea de comandos con Maven
+### Opción C: Línea de comandos con Maven
 
 ```bash
 # Compilar
@@ -213,9 +213,9 @@ Dos suites JUnit 5 que verifican el motor IR y la ontología:
 
 ## 7. Dataset y ontología
 
-- **Corpus de recetas**: [somosnlp/RecetasDeLaAbuela](https://huggingface.co/datasets/somosnlp/RecetasDeLaAbuela) — 20 012 recetas en español. El fichero `recetas.json` está embebido en el JAR. Para regenerarlo, ejecutar `scripts/download_dataset.py`.
-- **Recetas de temporada**: [TheMealDB](https://www.themealdb.com/) — API pública sin autenticación. `AgentePercepcion` consulta `filter.php?i={ingrediente}` y `lookup.php?i={id}` según el mes actual (enero–diciembre).
-- **Ontología de alimentos**: `src/main/resources/ontologia_alimentos.ttl` — jerarquía RDFS de categorías de alimentos con valores nutricionales por 100 g. El razonador RDFS de Apache Jena infiere supertipos transitivos en tiempo de ejecución.
+- **Corpus de recetas**: [somosnlp/RecetasDeLaAbuela](https://huggingface.co/datasets/somosnlp/RecetasDeLaAbuela)  20 012 recetas en español. El fichero `recetas.json` está embebido en el JAR. Para regenerarlo, ejecutar `scripts/download_dataset.py`.
+- **Recetas de temporada**: [TheMealDB](https://www.themealdb.com/) API pública sin autenticación. `AgentePercepcion` consulta `filter.php?i={ingrediente}` y `lookup.php?i={id}` según el mes actual (enero–diciembre).
+- **Ontología de alimentos**: `src/main/resources/ontologia_alimentos.ttl` jerarquía RDFS de categorías de alimentos con valores nutricionales por 100 g. El razonador RDFS de Apache Jena infiere supertipos transitivos en tiempo de ejecución.
 
 ---
 
