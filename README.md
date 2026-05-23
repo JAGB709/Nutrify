@@ -1,7 +1,7 @@
-# Nutrify — Nutricionista Virtual
+# Nutrify: Nutricionista Virtual
 
 Sistema multiagente JADE que recomienda recetas a partir de los ingredientes disponibles.  
-Desarrollado para la asignatura **Sistemas Inteligentes** — UPM, curso 2025-26.
+Desarrollado para la asignatura **Sistemas Inteligentes**, UPM, curso 2025-26.
 
 **Autores:** JAGB709 · Rodrigo-LdL  
 **Repositorio:** https://github.com/JAGB709/Nutrify
