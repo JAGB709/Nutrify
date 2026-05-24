@@ -6,8 +6,8 @@ import es.upm.nutricionista.nlp.TextNormalizer;
 import java.util.*;
 
 /**
- * Inverted index over the recipe corpus.
- * Precomputes IDF values and document L2 norms for cosine similarity.
+ * Indice invertido para recetas basado en ingredientes. Permite recuperar rápidamente las recetas que contienen ciertos términos.
+ * Calcula TF-IDF para cada término en cada receta, y almacena la norma L2 de cada receta para la similitud coseno. También mantiene un conjunto de términos por receta para
  */
 public class InvertedIndex {
 
@@ -27,7 +27,7 @@ public class InvertedIndex {
 
         if (recipes == null) return;
 
-        // Pass 1: build posting lists
+        // Paso 1: Construir posting lists con TF sin normalizar
         for (Recipe recipe : recipes) {
             int recipeId = recipe.getId();
             List<String> ingredientes = recipe.getIngredientes();
@@ -47,13 +47,13 @@ public class InvertedIndex {
             }
         }
 
-        // Pass 2: precompute IDF
+        // Paso 2: Calcular IDF para cada término
         for (Map.Entry<String, Map<Integer, Integer>> e : postingLists.entrySet()) {
             int df = e.getValue().size();
             if (df > 0) idfValues.put(e.getKey(), Math.log10((double) documentCount / df));
         }
 
-        // Pass 3: precompute full document L2 norms
+        // Paso 3: Calcular norma L2 de cada documento para la similitud coseno
         Map<Integer, Double> sumSq = new HashMap<>();
         for (Map.Entry<String, Map<Integer, Integer>> termEntry : postingLists.entrySet()) {
             String term = termEntry.getKey();
@@ -70,20 +70,29 @@ public class InvertedIndex {
         }
     }
 
+    // Métodos de acceso
     public Map<Integer, Integer> getPostingList(String term) {
         Map<Integer, Integer> r = postingLists.get(term);
         return r != null ? r : Collections.emptyMap();
     }
-
+    // Devuelve el número de documentos que contienen el término
     public int getDocumentFrequency(String term) {
         Map<Integer, Integer> p = postingLists.get(term);
         return p != null ? p.size() : 0;
     }
 
-    public Set<String> getAllTerms()                   { return postingLists.keySet(); }
-    public int getDocumentCount()                      { return documentCount; }
-    public Map<String, Double> getIdfValues()          { return idfValues; }
-    public double getDocNorm(int recipeId)             { return docNorms.getOrDefault(recipeId, 0.0); }
+    public Set<String> getAllTerms()                   {
+        return postingLists.keySet();
+    }
+    public int getDocumentCount()                      {
+        return documentCount;
+    }
+    public Map<String, Double> getIdfValues()          {
+        return idfValues;
+    }
+    public double getDocNorm(int recipeId)             {
+        return docNorms.getOrDefault(recipeId, 0.0);
+    }
     public Set<String> getRecipeTerms(int recipeId)    {
         Set<String> t = recipeTerms.get(recipeId);
         return t != null ? t : Collections.emptySet();

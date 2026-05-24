@@ -1,5 +1,10 @@
 package es.upm.nutricionista.modelo;
 
+/**
+ * Representa los macronutrientes de una receta: calorías, proteínas, grasas y carbohidratos.
+ * Se utiliza para mostrar esta información en la interfaz de usuario y para filtrar recetas según necesidades nutricionales.
+ */
+
 public class Macronutrients {
     private final int calorias;
     private final int proteinas;

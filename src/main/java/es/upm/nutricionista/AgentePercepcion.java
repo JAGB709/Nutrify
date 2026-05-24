@@ -18,7 +18,7 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * AgentePercepcion — percepción del entorno en el pipeline Nutrify.
+ * AgentePercepcion: percepción del entorno en el pipeline Nutrify.
  *
  * Responsabilidades:
  *  1. Registrarse en el DF como "percepcion-service"
@@ -119,9 +119,9 @@ public class AgentePercepcion extends Agent {
         lector.start();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Behaviour 1: Registro en DF
-    // ─────────────────────────────────────────────────────────────────────────
+    
+    // Comportamiento 1: Registro en DF
+    
 
     private class RegistrarServicioBehaviour extends OneShotBehaviour {
         @Override
@@ -130,9 +130,9 @@ public class AgentePercepcion extends Agent {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Behaviour 2: Primer query desde args (modo batch)
-    // ─────────────────────────────────────────────────────────────────────────
+    
+    // Comportamiento 2: Primer query desde args (modo batch)
+    
 
     private class IniciarConArgsBehaviour extends OneShotBehaviour {
         private final String rawInput;
@@ -148,10 +148,10 @@ public class AgentePercepcion extends Agent {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Behaviour 3: GestionarConsultasBehaviour
+    
+    // Comportamiento 3: GestionarConsultasBehaviour
     // Recibe consultas de consola ("console-input") y de la GUI ("nueva-consulta")
-    // ─────────────────────────────────────────────────────────────────────────
+    
 
     private class GestionarConsultasBehaviour extends CyclicBehaviour {
 

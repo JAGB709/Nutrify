@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Loads recipes from recetas.json (classpath resource) into a List&lt;Recipe&gt;.
- * Uses only standard Java I/O — no external JSON library required.
+ * Utilidad para cargar recetas desde un archivo JSON ubicado en el classpath. Proporciona métodos para leer el archivo, parsear su contenido y convertirlo en objetos Recipe.
+ * El formato esperado del JSON es una lista de objetos con campos id, nombre, ingredientes (lista de strings), pasos (lista de strings) y macronutrientes (objeto con calorias, proteínas, grasas y carbohidratos).
+ * Este loader es utilizado por el agente de búsqueda de recetas para inicializar su base de datos de recetas 
+ * disponibles. Se implementa un parser manual para evitar dependencias externas, aunque en un proyecto real se recomendaría usar una biblioteca como Jackson o Gson para manejar JSON de manera más robusta y eficiente.
  */
 public class RecipeLoader {
 
@@ -26,7 +28,7 @@ public class RecipeLoader {
         }
         return load(is);
     }
-
+    // Método privado para cargar recetas desde un InputStream, utilizado por el método público que carga desde el classpath.
     public static List<Recipe> load(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
@@ -38,6 +40,7 @@ public class RecipeLoader {
         return parseRecipes(sb.toString());
     }
 
+    // Método privado para parsear el contenido JSON y convertirlo en una lista de objetos Recipe. Implementa un parser manual básico.
     private static List<Recipe> parseRecipes(String json) {
         List<Recipe> recipes = new ArrayList<>();
         String content = json.trim();
@@ -51,6 +54,7 @@ public class RecipeLoader {
         return recipes;
     }
 
+    // Método auxiliar para dividir el contenido JSON en objetos individuales, manejando correctamente las estructuras anidadas y las cadenas con comillas.
     private static List<String> splitObjects(String content) {
         List<String> objects = new ArrayList<>();
         int depth = 0, start = -1;
@@ -69,6 +73,7 @@ public class RecipeLoader {
         return objects;
     }
 
+    // Método auxiliar para parsear un objeto JSON individual y convertirlo en un objeto Recipe. Extrae los campos necesarios y maneja posibles errores de formato.
     private static Recipe parseRecipe(String obj) {
         try {
             int id = Integer.parseInt(extractValue(obj, "id"));
@@ -81,6 +86,8 @@ public class RecipeLoader {
             return null;
         }
     }
+
+    // Métodos auxiliares para extraer valores de campos específicos del JSON, manejar arrays y objetos anidados, y convertirlos en los tipos adecuados para construir el objeto Recipe.
 
     private static String extractValue(String obj, String key) {
         String search = "\"" + key + "\"";
@@ -101,6 +108,7 @@ public class RecipeLoader {
         }
     }
 
+    // Método auxiliar para extraer un array de strings de un campo específico del JSON, manejando correctamente las comillas y los delimitadores.
     private static List<String> extractArray(String obj, String key) {
         List<String> items = new ArrayList<>();
         int keyIdx = obj.indexOf("\"" + key + "\"");
@@ -133,6 +141,8 @@ public class RecipeLoader {
         return items;
     }
 
+
+    // Método auxiliar para extraer los macronutrientes de un objeto JSON anidado dentro del campo "macronutrientes", y convertirlo en un objeto Macronutrients.
     private static Macronutrients extractMacros(String obj) {
         int keyIdx = obj.indexOf("\"macronutrientes\"");
         if (keyIdx == -1) return new Macronutrients(0, 0, 0, 0);

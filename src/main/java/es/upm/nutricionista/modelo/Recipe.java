@@ -1,7 +1,12 @@
 package es.upm.nutricionista.modelo;
 
+
 import java.util.List;
 
+/**
+ * Representa una receta con sus ingredientes, pasos y nutrientes.
+ * Se utiliza para almacenar y mostrar información sobre las recetas disponibles.
+ */
 public class Recipe {
     private final int id;
     private final String nombre;

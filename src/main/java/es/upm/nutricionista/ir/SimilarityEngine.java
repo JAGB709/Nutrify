@@ -6,9 +6,11 @@ import es.upm.nutricionista.modelo.Recipe;
 import java.util.*;
 
 /**
- * Ranks recipes by TF-IDF cosine similarity + Jaccard refinement.
+ * Evalua la similitud entre una consulta y las recetas usando TF-IDF y similitud coseno, además de Jaccard.
+ * Utiliza un índice invertido precomputado para eficiencia.
+ * El ranking se basa en una combinación de similitud coseno y Jaccard, ordenando por similitud coseno principalmente.
  *
- * Combined score = 0.7 * cosine + 0.3 * jaccard
+ * 
  */
 public class SimilarityEngine {
 

@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.util.*;
 
 /**
- * AgenteInteligente — motor IR y base de conocimiento de Nutrify.
+ * AgenteInteligente: motor IR y base de conocimiento de Nutrify.
  *
  * Responsabilidades:
  *  1. Cargar el corpus de recetas y construir el indice invertido (via MotorRecuperacion)
@@ -54,9 +54,9 @@ public class AgenteInteligente extends Agent {
         System.out.println("[AgenteInteligente] Detenido.");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Behaviour 1: InicializarBehaviour (OneShotBehaviour)
-    // ─────────────────────────────────────────────────────────────────────────
+    // 
+    // Comportamiento 1: InicializarBehaviour (OneShotBehaviour)
+    // 
 
     private class InicializarBehaviour extends OneShotBehaviour {
         @Override
@@ -92,10 +92,10 @@ public class AgenteInteligente extends Agent {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Behaviour 2: ProcesarConsultaBehaviour (CyclicBehaviour)
-    // Usa receive() + block() — patron correcto JADE para CyclicBehaviour
-    // ─────────────────────────────────────────────────────────────────────────
+    
+    // Comportamiento 2: ProcesarConsultaBehaviour (CyclicBehaviour)
+    // Usa receive() + block()  patron correcto JADE para CyclicBehaviour
+    
 
     private class ProcesarConsultaBehaviour extends CyclicBehaviour {
         private final MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
@@ -138,9 +138,9 @@ public class AgenteInteligente extends Agent {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    
     // Clasificacion ontologica mediante inferencia RDFS
-    // ─────────────────────────────────────────────────────────────────────────
+    
 
     /**
      * Clasifica los terminos de la consulta usando el razonador RDFS de Jena.
@@ -168,10 +168,10 @@ public class AgenteInteligente extends Agent {
         return String.join(",", categorias);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    
     // Serializacion de resultados
     // Formato: QUERY:<query>\n<id>|<nombre>|<score>|<cal>|<prot>|<gras>|<carbs>|<ingr>|<pasos>|cat:<cats>
-    // ─────────────────────────────────────────────────────────────────────────
+    
 
     private String serializar(List<QueryResult> resultados, String queryOriginal, String categorias) {
         StringBuilder sb = new StringBuilder();

@@ -90,7 +90,7 @@ public class SeasonalRecipeFetcher {
         return out;
     }
 
-    // ── Llamadas a la API ─────────────────────────────────────────────────────
+    //  Llamadas a la API
 
     private static List<String> getMealIdsByIngredient(String ingredient) throws IOException {
         String url = BASE_URL + "filter.php?i=" + ingredient.replace(" ", "_");
@@ -104,7 +104,7 @@ public class SeasonalRecipeFetcher {
         return parseMeal(json, indexForId);
     }
 
-    // ── HTTP ──────────────────────────────────────────────────────────────────
+    //  HTTP 
 
     private static String httpGet(String urlStr) throws IOException {
         URL url = new URL(urlStr);
@@ -125,7 +125,7 @@ public class SeasonalRecipeFetcher {
         }
     }
 
-    // ── Parsers ───────────────────────────────────────────────────────────────
+    //  Parsers 
 
     /**
      * Extrae los "idMeal" del JSON de filter.php.

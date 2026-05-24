@@ -7,12 +7,12 @@ import java.util.List;
 public class TextNormalizer {
 
     /**
-     * Normalizes a raw comma-separated or space-separated ingredient input string.
-     * Pipeline: lowercase -> strip accents -> split -> trim
-     *           -> filter stop words -> stem -> filter empty/short.
+     * Normaliza una cadena de ingredientes en bruto separada por comas o espacios.
+     * Canal de procesamiento: pasar a minúsculas -> eliminar acentos -> dividir -> recortar
+     *                       -> filtrar palabras vacías (stop words) -> aplicar stemming -> filtrar vacíos/very cortas.
      *
-     * @param rawInput raw user input e.g. "Salmon, esparragos, Limon" or "salmon esparragos limon"
-     * @return list of clean normalized+stemmed terms
+     * @param rawInput entrada en bruto del usuario p. ej. "Salmon, esparragos, Limon" o "salmon esparragos limon"
+     * @return lista de términos limpios normalizados y con stemming
      */
     public static List<String> normalize(String rawInput) {
         if (rawInput == null || rawInput.trim().isEmpty()) {
@@ -22,11 +22,11 @@ public class TextNormalizer {
         // Lowercase
         String lower = rawInput.toLowerCase();
 
-        // Strip diacritics/accents
+        // eliminar acentos
         String normalized = Normalizer.normalize(lower, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}", "");
 
-        // Determine delimiter: if contains comma use comma, else whitespace
+        // Dividir por comas o espacios, luego limpiar cada token
         String[] tokens = normalized.contains(",")
                 ? normalized.split(",")
                 : normalized.split("\\s+");
@@ -35,7 +35,7 @@ public class TextNormalizer {
         for (String token : tokens) {
             String clean = token.trim().replaceAll("[^a-z0-9 ]", "").trim();
             if (clean.isEmpty()) continue;
-            // For space-separated multi-word tokens from comma split, split further
+            // Filtrar stop words y aplicar stemming
             for (String word : clean.split("\\s+")) {
                 word = word.trim();
                 if (word.length() < 2) continue;
@@ -47,8 +47,7 @@ public class TextNormalizer {
     }
 
     /**
-     * Basic Spanish stemmer by suffix stripping.
-     * Handles common plural and verbal forms.
+     * Aplica un stemming muy básico para español, eliminando sufijos comunes. No es un algoritmo completo, pero ayuda a agrupar formas similares.
      */
     public static String stem(String word) {
         if (word == null || word.length() <= 4) return word;

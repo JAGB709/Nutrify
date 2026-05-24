@@ -14,7 +14,7 @@ import javax.swing.SwingUtilities;
 import java.util.*;
 
 /**
- * AgenteInterfaz — capa de presentación de Nutrify.
+ * AgenteInterfaz: capa de presentación de Nutrify.
  *
  * Responsabilidades:
  *  1. Registrar el servicio "interfaz-service" en el DF
@@ -77,9 +77,9 @@ public class AgenteInterfaz extends Agent {
         System.out.println("[AgenteInterfaz] Detenido.");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Behaviour 1: RegistrarServicioBehaviour (OneShotBehaviour)
-    // ─────────────────────────────────────────────────────────────────────────
+ 
+    // Comportamiento 1: RegistrarServicioBehaviour (OneShotBehaviour)
+    
 
     private class RegistrarServicioBehaviour extends OneShotBehaviour {
         @Override
@@ -89,10 +89,10 @@ public class AgenteInterfaz extends Agent {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Behaviour 2: MostrarResultadosBehaviour (CyclicBehaviour)
+    
+    // Comportamiento 2: MostrarResultadosBehaviour (CyclicBehaviour)
     // Usa receive() + block() — patrón correcto JADE para CyclicBehaviour
-    // ─────────────────────────────────────────────────────────────────────────
+    
 
     private class MostrarResultadosBehaviour extends CyclicBehaviour {
         private final MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
@@ -117,9 +117,9 @@ public class AgenteInterfaz extends Agent {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    
     // Presentación de resultados
-    // ─────────────────────────────────────────────────────────────────────────
+    
 
     void mostrarResultados(String queryTermsRaw, String content) {
         if (content.startsWith("ERROR:")) {
@@ -280,9 +280,9 @@ public class AgenteInterfaz extends Agent {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Gap Analysis — nivel de ingrediente completo
-    // ─────────────────────────────────────────────────────────────────────────
+    
+    // Gap Analysis: nivel de ingrediente completo
+    
 
     /**
      * Gap Analysis corregido: trabaja a nivel de ingrediente completo.
@@ -332,9 +332,9 @@ public class AgenteInterfaz extends Agent {
         return missing;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    
     // Generación de HTML para la GUI
-    // ─────────────────────────────────────────────────────────────────────────
+    
 
     private String generarHtml(String query, List<String[]> results,
                                 List<String[]> temporalResults, Set<String> userTerms) {
@@ -471,6 +471,9 @@ public class AgenteInterfaz extends Agent {
         return sb.toString();
     }
 
+    /** Tarjeta simplificada para recetas de temporada: no muestra score ni macronutrientes,
+     *  y limita la preparación a 3 pasos. 
+     */
     private String tarjetaTemporalHtml(int rank, String[] parts, Set<String> userTerms) {
         String nombre   = parts[1];
         String ingr     = parts[7];
@@ -527,9 +530,9 @@ public class AgenteInterfaz extends Agent {
         return sb.toString();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    
     // Helpers
-    // ─────────────────────────────────────────────────────────────────────────
+    
 
     private static String esc(String s) {
         if (s == null) return "";

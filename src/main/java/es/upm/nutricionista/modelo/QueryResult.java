@@ -1,5 +1,10 @@
 package es.upm.nutricionista.modelo;
 
+/**
+ * Representa el resultado de una consulta de búsqueda, incluyendo la receta encontrada y sus puntuaciones de similitud.
+ * Se utiliza para mostrar los resultados al usuario, ordenados por la puntuación combinada de similitud coseno y Jaccard.
+ */
+
 public class QueryResult implements Comparable<QueryResult> {
     private final Recipe recipe;
     private final double cosineScore;

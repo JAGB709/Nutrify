@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * MotorRecuperacion — fachada del motor de Recuperacion de Informacion.
+ * MotorRecuperacion: fachada del motor de Recuperacion de Informacion.
  *
  * Carga el corpus de recetas, construye el indice invertido y ofrece
  * el metodo buscar() que ejecuta TF-IDF coseno + Jaccard sobre los
