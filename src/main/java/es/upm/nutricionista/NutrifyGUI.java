@@ -25,7 +25,7 @@ public class NutrifyGUI extends JFrame {
     }
 
     public NutrifyGUI() {
-        super("Nutrify — Nutricionista Virtual");
+        super("Nutrify: Nutricionista Virtual");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(780, 580);
         setLocationRelativeTo(null);
@@ -33,7 +33,7 @@ public class NutrifyGUI extends JFrame {
         JPanel main = new JPanel(new BorderLayout(10, 10));
         main.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        JLabel titulo = new JLabel("Nutrify — Nutricionista Virtual", SwingConstants.CENTER);
+        JLabel titulo = new JLabel("Nutrify: Nutricionista Virtual", SwingConstants.CENTER);
         titulo.setFont(new Font("SansSerif", Font.BOLD, 20));
         main.add(titulo, BorderLayout.NORTH);
 
