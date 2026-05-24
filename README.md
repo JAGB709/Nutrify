@@ -117,6 +117,44 @@ sequenceDiagram
 - **Maven** 3.6+ o **IntelliJ IDEA** con Maven integrado
 - JADE 4.6.0 incluido en `lib/jade.jar` (no requiere descarga adicional)
 
+#### Instalar Java
+
+```bash
+# Ubuntu / Debian / Parrot OS
+sudo apt update && sudo apt install openjdk-11-jdk
+
+# Fedora / RHEL / CentOS
+sudo dnf install java-11-openjdk-devel
+
+# macOS con Homebrew
+brew install openjdk@11
+echo 'export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"' >> ~/.zshrc
+
+# Windows (winget)
+winget install EclipseAdoptium.Temurin.11.JDK
+
+# Verificar
+java -version
+```
+
+#### Instalar Maven (opcional — solo si no usas IntelliJ)
+
+```bash
+# Ubuntu / Debian
+sudo apt install maven
+
+# macOS con Homebrew
+brew install maven
+
+# Windows (winget)
+winget install Apache.Maven
+
+# Verificar
+mvn --version
+```
+
+> **IntelliJ IDEA**: trae Maven integrado. No necesitas instalarlo por separado; basta con abrir el proyecto y pulsar *Load Maven Project* o *Reload All Maven Projects* en el panel de Maven.
+
 ### Clonar el repositorio
 
 ```bash
@@ -127,14 +165,46 @@ cd Nutrify
 Abrir el directorio `Nutrify/` como proyecto Maven en IntelliJ IDEA.  
 IntelliJ descargará automáticamente **Apache Jena 4.10.0** y **JUnit 5** desde Maven Central.
 
-### Dependencias principales
+### Dependencias detalladas
 
-| Dependencia | Versión | Origen |
-|-------------|---------|--------|
-| JADE | 4.6.0 | `lib/jade.jar` (incluido en el repo) |
-| Apache Jena | 4.10.0 | Maven Central |
-| JUnit Jupiter | 5.10.2 | Maven Central (solo tests) |
-| Java | 11+ | Sistema operativo |
+Todas las dependencias están declaradas en `pom.xml`. Maven las descarga automáticamente al compilar.
+
+| Dependencia | Versión | Origen | Uso |
+|-------------|---------|--------|-----|
+| **JADE** | 4.6.0 | `lib/jade.jar` (incluido en el repo; instalado en el repositorio Maven local con `mvn install:install-file`) | Framework multi-agente: contenedor, Directory Facilitator, ACL messaging |
+| **Apache Jena** (`apache-jena-libs`) | 4.10.0 | Maven Central | Motor RDFS: carga de ontología TTL, razonador inferencial, consultas SPARQL |
+| **JUnit Jupiter** | 5.10.2 | Maven Central | Tests unitarios (solo compilación de tests; no se empaqueta en el JAR final) |
+| **Java** | 11+ | Sistema operativo | Plataforma de ejecución |
+
+#### Instalación local de JADE en Maven
+
+JADE no está en Maven Central. El `pom.xml` lo referencia como dependencia local. Si Maven no lo encuentra, ejecutar una vez:
+
+```bash
+# Desde el directorio raíz del proyecto (donde está pom.xml)
+mvn install:install-file \
+    -Dfile=lib/jade.jar \
+    -DgroupId=com.tilab.jade \
+    -DartifactId=jade \
+    -Dversion=4.6.0 \
+    -Dpackaging=jar
+```
+
+Después de este comando, `mvn package` funciona sin errores.
+
+#### Árbol de dependencias transitivas relevantes
+
+Apache Jena 4.10.0 trae las siguientes dependencias transitivas (descargadas automáticamente por Maven):
+
+| Librería transitiva | Versión | Propósito |
+|--------------------|---------|-----------|
+| SLF4J API | 2.0.x | Fachada de logging |
+| Log4j 2 | 2.x | Implementación de logging |
+| Jackson Databind | 2.x | Serialización JSON interna de Jena |
+| Apache Commons Lang | 3.x | Utilidades de cadenas y arrays |
+| Protobuf Java | 3.x | Formato RDF binario (Thrift/Protobuf) |
+
+Ninguna de estas librerías requiere configuración adicional; Maven las gestiona de forma automática.
 
 ---
 
