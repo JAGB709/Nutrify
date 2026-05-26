@@ -3,7 +3,8 @@
 Sistema multiagente JADE que recomienda recetas a partir de los ingredientes disponibles.  
 Desarrollado para la asignatura **Sistemas Inteligentes**, UPM, curso 2025-26.
 
-**Autores:** JAGB709 · Rodrigo-LdL  
+**Autores:** José Ángel Galán Blázquez JAGB709
+              Rodrigo López de Lacalle Estívariz Rodrigo-LdL  
 **Repositorio:** https://github.com/JAGB709/Nutrify
 
 ---
